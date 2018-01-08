@@ -6,31 +6,29 @@ const jwt = require('jwt-simple')
 const cors = require('cors')
 const passport = require('passport')
 const bcrypt = require('bcrypt')
-// const auth = require('./auth.js')
-// const cfg = require('./config.js')
+
+const auth = require('./auth.js')()
+const cfg = require('./config.js')
 const Restaurant = require('./db/schema').Restaurant
 const User = require('./db/schema').User
-const FavoritedRestaurant = require('./db/schema').FavoritedRestaurant
+const FavoriteRestaurant = require('./db/schema').FavoriteRestaurant
+
 const app = express()
 
-app.use(parser.json())
-// app.use(auth.initialize())
-
-let cors_list
-if (process.env.NODE_ENV === 'production') {
-	cors_list = {
-		origin: 'http://localhost:3000',
-		default: 'http://localhost:3000'
-	}
+let cors_list = {
+	origin: 'http://localhost:3000',
+	default: 'http://localhost:3000'
 }
 
-app.get('/', (request, response) => {
-	response.send('Hello World!')
-})
-
 app.use(cors(cors_list))
+app.use(parser.json())
+app.use(auth.initialize())
 
+app.get('/', (req, res) => {
+	res.send('Hello World!')
+})
 //LogIn and signUp routes
+
 app.post('/api/login', function(req, res) {
 	if (req.body.email && req.body.password) {
 		User.findOne({ email: req.body.email }).then(user => {
@@ -61,6 +59,7 @@ app.post('/api/signup', function(req, res) {
 		User.findOne({ email: req.body.email }).then(user => {
 			if (user) {
 				res.sendStatus(500)
+				console.log(err)
 			} else {
 				bcrypt.hash(req.body.password, 10, function(err, hash) {
 					User.create({ email: req.body.email, password: hash }).then(user => {
@@ -70,6 +69,7 @@ app.post('/api/signup', function(req, res) {
 							res.json({ token: token })
 						} else {
 							res.sendStatus(401)
+							console.log(err)
 						}
 					})
 				})
@@ -77,6 +77,7 @@ app.post('/api/signup', function(req, res) {
 		})
 	} else {
 		res.sendStatus(401)
+		console.log(err)
 	}
 })
 
@@ -97,7 +98,7 @@ app.get('/api/restaurants', (req, res) => {
 		Restaurant.find()
 			.then(restaurants => {
 				res.json({
-					restaurants: restaurant,
+					restaurants: restaurants,
 					userid: ''
 				})
 			})

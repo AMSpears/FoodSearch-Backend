@@ -13,25 +13,25 @@ const RestaurantSchema = new mongoose.Schema({
 	food_type: String
 })
 
-const FavoritedRestaurantSchema = new mongoose.Schema({
+const FavoriteRestaurantSchema = new mongoose.Schema({
 	restaurant_id: String
 })
 
 const UserSchema = new mongoose.Schema({
 	email: String,
 	password: String,
-	favorited_restaturants: [FavoritedRestaurantSchema]
+	favorite_restaturant: [FavoriteRestaurantSchema]
 })
 
 const Restaurant = mongoose.model('Restaurant', RestaurantSchema)
 const User = mongoose.model('User', UserSchema)
-const FavoritedRestaurant = mongoose.model(
-	'FavoritedRestaurant',
-	FavoritedRestaurantSchema
+const FavoriteRestaurant = mongoose.model(
+	'FavoriteRestaurant',
+	FavoriteRestaurantSchema
 )
 
 module.exports = {
 	Restaurant,
 	User,
-	FavoritedRestaurant
+	FavoriteRestaurant
 }
