@@ -1,6 +1,10 @@
 const mongoose = require('mongoose')
 
-// add logic for connections
+if (process.env.NODE_ENV == 'production') {
+	mongoose.connect(process.env.MLAB_URL, { userMongoClient: true })
+} else {
+	mongoose.connect('mongodb://localhost/restaurant', { userMongoClient: true })
+}
 
 mongoose.Promise = Promise
 
