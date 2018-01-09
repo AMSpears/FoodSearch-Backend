@@ -2,6 +2,7 @@ const mongoose = require('./connection')
 
 const RestaurantSchema = new mongoose.Schema({
 	owner_id: String,
+	restaurant_name: String,
 	street_address: String,
 	state: String,
 	city: String,
