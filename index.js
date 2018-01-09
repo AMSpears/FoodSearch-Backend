@@ -29,7 +29,7 @@ app.get('/', (req, res) => {
 })
 //LogIn and signUp routes
 
-app.post('/api/login', function(req, res) {
+app.post('/api/signin', function(req, res) {
 	if (req.body.email && req.body.password) {
 		User.findOne({ email: req.body.email }).then(user => {
 			if (user) {
