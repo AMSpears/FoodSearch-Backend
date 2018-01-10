@@ -25,6 +25,7 @@ module.exports = function() {
 		}
 	})
 	passport.use(strategy)
+
 	return {
 		initialize: function() {
 			return passport.initialize()

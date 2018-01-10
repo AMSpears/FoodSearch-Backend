@@ -1,8 +1,6 @@
 const mongoose = require('mongoose')
 
-mongoose.connect('mongodb://localhost/restaurants', {
-	useMongoClient: true
-})
+mongoose.connect('mongodb://localhost/restaurants')
 
 mongoose.Promise = Promise
 

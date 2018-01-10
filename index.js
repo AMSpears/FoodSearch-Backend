@@ -6,6 +6,8 @@ const jwt = require('jwt-simple')
 const cors = require('cors')
 const passport = require('passport')
 const bcrypt = require('bcrypt')
+const Yelp = require('yelp-api-v3')
+const axios = require('axios')
 
 const auth = require('./auth.js')()
 const cfg = require('./config.js')
@@ -27,7 +29,32 @@ app.use(auth.initialize())
 app.get('/', (req, res) => {
 	res.send('Hello World!')
 })
-//LogIn and signUp routes
+
+// Yelp api ==> https://www.yelp.com/developers/documentation/v3/business_search
+app.post('/api/restaurants', function(req, res) {
+	let request = axios.create({
+		headers: {
+			Authorization: `Bearer HBLkugs6PvIPyz5hNupxRUtXC5_dxH3a_lscCNOSr2lTOoHuH-R1S67Wl5cnCCUg6xnJuWN6UnUHCbPZeAILWzsAsO60K8w1mSDYE6-r40SAPnhn7EQA3aVSbhFVWnYx`
+		}
+	})
+	// find a way to store the api key in environment variable
+	request
+		.get('https://api.yelp.com/v3/businesses/search', {
+			params: {
+				term: req.body.term,
+				location: req.body.location
+			}
+		})
+		.then(response => {
+			console.log(response.data)
+			res.json(response.data.businesses)
+		})
+		.catch(err => {
+			console.log(err)
+		})
+})
+
+//signIn and signUp routes
 
 app.post('/api/signin', function(req, res) {
 	if (req.body.email && req.body.password) {
@@ -85,11 +112,11 @@ app.post('/api/signup', function(req, res) {
 
 app.get('/api/restaurants', (req, res) => {
 	if (req.headers.token && req.headers.token.length > 0) {
-		let userid = jwt.decode(req.headers.token, cfg.jwtSecret).id
+		let userid = jwt.decode(req.headers.toke, cfg.jwtSecret).id
 		Restaurant.find()
 			.then(restaurants => {
 				res.json({
-					restaurants: restaurants,
+					restaurant: restaurant,
 					userid: userid
 				})
 			})
@@ -98,7 +125,7 @@ app.get('/api/restaurants', (req, res) => {
 		Restaurant.find()
 			.then(restaurants => {
 				res.json({
-					restaurants: restaurants,
+					restaurant: restaurants,
 					userid: ''
 				})
 			})

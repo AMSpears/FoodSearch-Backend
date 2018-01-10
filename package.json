@@ -4,16 +4,22 @@
   "description": "",
   "main": "yes",
   "dependencies": {
+    "axios": "^0.17.1",
     "bcrypt": "^1.0.3",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
+    "curl": "^0.1.4",
     "express": "^4.16.2",
     "jwt-simple": "^0.5.1",
     "method-override": "^2.3.10",
     "mongoose": "^5.0.0-rc2",
+    "nodemon": "^1.14.10",
     "passport": "^0.4.0",
     "passport-jwt": "^3.0.1",
-    "yelp": "^1.0.2"
+    "yelp": "^1.0.2",
+    "yelp-api-v3": "^1.5.0",
+    "zomato": "^1.1.0",
+    "zomato.js": "^1.1.0"
   },
   "devDependencies": {},
   "scripts": {
