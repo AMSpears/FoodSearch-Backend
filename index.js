@@ -31,28 +31,28 @@ app.get('/', (req, res) => {
 })
 
 // Yelp api ==> https://www.yelp.com/developers/documentation/v3/business_search
-app.post('/api/restaurants', function(req, res) {
-	let request = axios.create({
-		headers: {
-			Authorization: `Bearer HBLkugs6PvIPyz5hNupxRUtXC5_dxH3a_lscCNOSr2lTOoHuH-R1S67Wl5cnCCUg6xnJuWN6UnUHCbPZeAILWzsAsO60K8w1mSDYE6-r40SAPnhn7EQA3aVSbhFVWnYx`
-		}
-	})
-	// find a way to store the api key in environment variable
-	request
-		.get('https://api.yelp.com/v3/businesses/search', {
-			params: {
-				term: req.body.term,
-				location: req.body.location
-			}
-		})
-		.then(response => {
-			console.log(response.data)
-			res.json(response.data.businesses)
-		})
-		.catch(err => {
-			console.log(err)
-		})
-})
+// app.post('/api/restaurants', function(req, res) {
+// 	let request = axios.create({
+// 		headers: {
+// 			Authorization: `Bearer HBLkugs6PvIPyz5hNupxRUtXC5_dxH3a_lscCNOSr2lTOoHuH-R1S67Wl5cnCCUg6xnJuWN6UnUHCbPZeAILWzsAsO60K8w1mSDYE6-r40SAPnhn7EQA3aVSbhFVWnYx`
+// 		}
+// 	})
+// 	// find a way to store the api key in environment variable
+// 	request
+// 		.get('https://api.yelp.com/v3/businesses/search', {
+// 			params: {
+// 				term: req.body.term,
+// 				location: req.body.location
+// 			}
+// 		})
+// 		.then(response => {
+// 			console.log(response.data)
+// 			res.json(response.data.businesses)
+// 		})
+// 		.catch(err => {
+// 			console.log(err)
+// 		})
+// })
 
 //signIn and signUp routes
 
@@ -112,11 +112,11 @@ app.post('/api/signup', function(req, res) {
 
 app.get('/api/restaurants', (req, res) => {
 	if (req.headers.token && req.headers.token.length > 0) {
-		let userid = jwt.decode(req.headers.toke, cfg.jwtSecret).id
+		let userid = jwt.decode(req.headers.token, cfg.jwtSecret).id
 		Restaurant.find()
 			.then(restaurants => {
 				res.json({
-					restaurant: restaurant,
+					restaurants: restaurants,
 					userid: userid
 				})
 			})
@@ -125,12 +125,87 @@ app.get('/api/restaurants', (req, res) => {
 		Restaurant.find()
 			.then(restaurants => {
 				res.json({
-					restaurant: restaurants,
+					restaurants: restaurants,
 					userid: ''
 				})
 			})
 			.catch(err => console.log(err))
 	}
+})
+
+app.post('/api/restaurants', (req, res) => {
+	let userid = jwt.decode(req.headers.token, cfg.jwtSecret).id
+	User.findById(userid)
+		.then(user => {
+			if (user) {
+				Restaurant.create({
+					id: userid,
+					food: req.body.food,
+					image_url: req.body.image_url,
+					location: req.body.location
+				})
+					.then(restaurant => {
+						res.json(restaurant)
+					})
+					.catch(err => {
+						res.sendStatus(401).json(err)
+					})
+			} else {
+				res.sendStatus(401)
+			}
+		})
+		.catch(err => {
+			res.sendStatus(401).json(err)
+		})
+})
+app.get('/api/restaurants/:id', (req, res) => {
+	Restaurant.findById(req.params.id)
+		.then(restaurant => {
+			res.json(restaurant)
+		})
+		.catch(err => console.log(err))
+})
+
+app.put('/api/restaurants/:id', (req, res) => {
+	let userid = jwt.decode(req.headers.token, cfg.jwtSecret).id
+	Restaurant.findById(req.params.id)
+		.then(restaurant => {
+			if (restaurant.owner_id === userid) {
+				restaurant
+					.update({
+						id: userid,
+						food: req.body.food,
+						image_url: req.body.image_url,
+						location: req.body.location
+					})
+					.then(restaurant => {
+						console.log(restaurant)
+						res.json(restaurant)
+					})
+					.catch(err => {
+						res.sendStatus(402).json(err)
+					})
+			} else {
+				res.sendStatus(402)
+			}
+		})
+		.catch(err => console.log(err))
+})
+
+app.delete('/api/restaurants/:id', (req, res) => {
+	let userid = jwt.decode(req.headers.token, cfg.jwtSecret).id
+	Restaurant.findById(req.params.id)
+		.then(restaurant => {
+			if (restaurant.owner_id === userid) {
+				restaurant
+					.remove()
+					.then(() => {
+						res.json(200)
+					})
+					.catch(err => console.log(err))
+			}
+		})
+		.catch(err => console.log(err))
 })
 
 app.listen(4000, () => {

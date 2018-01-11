@@ -3,14 +3,9 @@ const mongoose = require('./connection')
 const RestaurantSchema = new mongoose.Schema({
 	id: String,
 	term: String,
-
-	location: {
-		address1: String,
-		city: String,
-		state: String,
-		zip_code: Number,
-		country: String
-	}
+	food: String,
+	image_url: String,
+	location: String
 })
 
 const FavoriteRestaurantSchema = new mongoose.Schema({
