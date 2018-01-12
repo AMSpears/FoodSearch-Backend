@@ -5,7 +5,6 @@ if (process.env.NODE_ENV == 'production') {
 } else {
 	mongoose.connect('mongodb://localhost/restaurants')
 }
-// mongoose.connect('mongodb://localhost/restaurants')
 
 mongoose.Promise = Promise
 

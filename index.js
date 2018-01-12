@@ -14,8 +14,8 @@ if (process.env.NODE_ENV === 'production') {
 	}
 } else {
 	cors_list = {
-		origin: 'http://food-searches.surge.sh/ ',
-		default: 'http://food-searches.surge.sh/ '
+		origin: 'http://food-searches.surge.sh/',
+		default: 'http://food-searches.surge.sh/'
 	}
 }
 
@@ -27,14 +27,15 @@ app.get('/', (req, res) => {
 })
 
 // Yelp api ==> https://www.yelp.com/developers/documentation/v3/business_search
+
 app.post('/api/search', function(req, res) {
+	// find a way to store the api key in environment variable
 	// let api_key = process.env.API_KEY
 	let request = axios.create({
 		headers: {
 			Authorization: `Bearer HBLkugs6PvIPyz5hNupxRUtXC5_dxH3a_lscCNOSr2lTOoHuH-R1S67Wl5cnCCUg6xnJuWN6UnUHCbPZeAILWzsAsO60K8w1mSDYE6-r40SAPnhn7EQA3aVSbhFVWnYx`
 		}
 	})
-	// find a way to store the api key in environment variable
 	request
 		.get('https://api.yelp.com/v3/businesses/search', {
 			params: {
