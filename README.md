@@ -1,5 +1,7 @@
 # Food Search
 
+![picture](./src/Img/FS-logo.png)
+
 ## Description
 
 The purpose of this application is to allow the user to browse for restaurants with the type of food they desire and most convenient location.
@@ -11,8 +13,7 @@ The purpose of this application is to allow the user to browse for restaurants w
 
 ## Link to deployed app
 
-* Home search -- Backend -- https://food-searches.herokuapp.com/
-* Home search -- Frontend -- http://food-searches.surge.sh/
+* Home search -- http://food-searches.surge.sh/
 
 ## Technologies Uses
 
@@ -69,4 +70,4 @@ Dependencies Back-end:
 
 ## Acknowledgements
 
-Logo and web design by Chaz Spears -- chazspears.com
+Logo and web design by Chaz Spears
