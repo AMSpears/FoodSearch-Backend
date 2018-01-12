@@ -7,19 +7,17 @@ const Restaurant = require('./db/schema').Restaurant
 
 const app = express()
 
-if (process.env.NODE_ENV === 'production') {
-	cors_list = {
-		origin: 'http://localhost:3000',
-		default: 'http://localhost:3000'
-	}
-} else {
-	cors_list = {
-		origin: 'http://food-searches.surge.sh/',
-		default: 'http://food-searches.surge.sh/'
-	}
-}
+// if (process.env.NODE_ENV === 'production') {
+// 	cors_list = {
+// 		origin: 'http://localhost:3000'
+// 	}
+// } else {
+// 	cors_list = {
+// 		origin: 'http://food-searches.surge.sh/'
+// 	}
+// }
 
-app.use(cors(cors_list))
+app.use(cors())
 app.use(parser.json())
 
 app.get('/', (req, res) => {
