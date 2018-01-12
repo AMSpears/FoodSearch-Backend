@@ -13,7 +13,7 @@ The purpose of this application is to allow the user to browse for restaurants w
 
 ## Link to deployed app
 
-* Home search -- http://food-searches.surge.sh/
+* Food search -- http://food-searches.surge.sh/
 
 ## Technologies Uses
 
