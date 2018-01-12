@@ -1,19 +1,9 @@
-// follow user authentication steps from https://blog.jscrambler.com/implementing-jwt-using-passport/
-
 const express = require('express')
 const parser = require('body-parser')
-const jwt = require('jwt-simple')
 const cors = require('cors')
-const passport = require('passport')
-const bcrypt = require('bcrypt')
-const Yelp = require('yelp-api-v3')
 const axios = require('axios')
 
-const auth = require('./auth.js')()
-const cfg = require('./config.js')
 const Restaurant = require('./db/schema').Restaurant
-const User = require('./db/schema').User
-const FavoriteRestaurant = require('./db/schema').FavoriteRestaurant
 
 const app = express()
 
@@ -24,188 +14,33 @@ let cors_list = {
 
 app.use(cors(cors_list))
 app.use(parser.json())
-app.use(auth.initialize())
 
 app.get('/', (req, res) => {
 	res.send('Hello World!')
 })
 
 // Yelp api ==> https://www.yelp.com/developers/documentation/v3/business_search
-// app.post('/api/restaurants', function(req, res) {
-// 	let request = axios.create({
-// 		headers: {
-// 			Authorization: `Bearer HBLkugs6PvIPyz5hNupxRUtXC5_dxH3a_lscCNOSr2lTOoHuH-R1S67Wl5cnCCUg6xnJuWN6UnUHCbPZeAILWzsAsO60K8w1mSDYE6-r40SAPnhn7EQA3aVSbhFVWnYx`
-// 		}
-// 	})
-// 	// find a way to store the api key in environment variable
-// 	request
-// 		.get('https://api.yelp.com/v3/businesses/search', {
-// 			params: {
-// 				term: req.body.term,
-// 				location: req.body.location
-// 			}
-// 		})
-// 		.then(response => {
-// 			console.log(response.data)
-// 			res.json(response.data.businesses)
-// 		})
-// 		.catch(err => {
-// 			console.log(err)
-// 		})
-// })
-
-//signIn and signUp routes
-
-app.post('/api/signin', function(req, res) {
-	if (req.body.email && req.body.password) {
-		User.findOne({ email: req.body.email }).then(user => {
-			if (user) {
-				bcrypt.compare(req.body.password, user.password, function(
-					err,
-					response
-				) {
-					if (response) {
-						var payload = { id: user.id }
-						var token = jwt.encode(payload, cfg.jwtSecret)
-						res.json({ token: token })
-					} else {
-						res.sendStatus(500)
-					}
-				})
-			} else {
-				res.sendStatus(500)
+app.post('/api/search', function(req, res) {
+	let request = axios.create({
+		headers: {
+			Authorization: `Bearer HBLkugs6PvIPyz5hNupxRUtXC5_dxH3a_lscCNOSr2lTOoHuH-R1S67Wl5cnCCUg6xnJuWN6UnUHCbPZeAILWzsAsO60K8w1mSDYE6-r40SAPnhn7EQA3aVSbhFVWnYx`
+		}
+	})
+	// find a way to store the api key in environment variable
+	request
+		.get('https://api.yelp.com/v3/businesses/search', {
+			params: {
+				term: req.body.term,
+				location: req.body.location
 			}
 		})
-	} else {
-		res.sendStatus(401)
-	}
-})
-
-app.post('/api/signup', function(req, res) {
-	if (req.body.email && req.body.password) {
-		User.findOne({ email: req.body.email }).then(user => {
-			if (user) {
-				res.sendStatus(500)
-				console.log(err)
-			} else {
-				bcrypt.hash(req.body.password, 10, function(err, hash) {
-					User.create({ email: req.body.email, password: hash }).then(user => {
-						if (user) {
-							var payload = { id: user.id }
-							var token = jwt.encode(payload, cfg.jwtSecret)
-							res.json({ token: token })
-						} else {
-							res.sendStatus(401)
-							console.log(err)
-						}
-					})
-				})
-			}
-		})
-	} else {
-		res.sendStatus(401)
-		console.log(err)
-	}
-})
-
-// Restaurants routes
-
-app.get('/api/restaurants', (req, res) => {
-	if (req.headers.token && req.headers.token.length > 0) {
-		let userid = jwt.decode(req.headers.token, cfg.jwtSecret).id
-		Restaurant.find()
-			.then(restaurants => {
-				res.json({
-					restaurants: restaurants,
-					userid: userid
-				})
-			})
-			.catch(err => console.log(err))
-	} else {
-		Restaurant.find()
-			.then(restaurants => {
-				res.json({
-					restaurants: restaurants,
-					userid: ''
-				})
-			})
-			.catch(err => console.log(err))
-	}
-})
-
-app.post('/api/restaurants', (req, res) => {
-	let userid = jwt.decode(req.headers.token, cfg.jwtSecret).id
-	User.findById(userid)
-		.then(user => {
-			if (user) {
-				Restaurant.create({
-					id: userid,
-					food: req.body.food,
-					image_url: req.body.image_url,
-					location: req.body.location
-				})
-					.then(restaurant => {
-						res.json(restaurant)
-					})
-					.catch(err => {
-						res.sendStatus(401).json(err)
-					})
-			} else {
-				res.sendStatus(401)
-			}
+		.then(response => {
+			console.log(response.data)
+			res.json(response.data.businesses)
 		})
 		.catch(err => {
-			res.sendStatus(401).json(err)
+			console.log(err)
 		})
-})
-app.get('/api/restaurants/:id', (req, res) => {
-	Restaurant.findById(req.params.id)
-		.then(restaurant => {
-			res.json(restaurant)
-		})
-		.catch(err => console.log(err))
-})
-
-app.put('/api/restaurants/:id', (req, res) => {
-	let userid = jwt.decode(req.headers.token, cfg.jwtSecret).id
-	Restaurant.findById(req.params.id)
-		.then(restaurant => {
-			if (restaurant.owner_id === userid) {
-				restaurant
-					.update({
-						id: userid,
-						food: req.body.food,
-						image_url: req.body.image_url,
-						location: req.body.location
-					})
-					.then(restaurant => {
-						console.log(restaurant)
-						res.json(restaurant)
-					})
-					.catch(err => {
-						res.sendStatus(402).json(err)
-					})
-			} else {
-				res.sendStatus(402)
-			}
-		})
-		.catch(err => console.log(err))
-})
-
-app.delete('/api/restaurants/:id', (req, res) => {
-	let userid = jwt.decode(req.headers.token, cfg.jwtSecret).id
-	Restaurant.findById(req.params.id)
-		.then(restaurant => {
-			if (restaurant.owner_id === userid) {
-				restaurant
-					.remove()
-					.then(() => {
-						res.json(200)
-					})
-					.catch(err => console.log(err))
-			}
-		})
-		.catch(err => console.log(err))
 })
 
 app.listen(4000, () => {
