@@ -21,6 +21,7 @@ app.get('/', (req, res) => {
 
 // Yelp api ==> https://www.yelp.com/developers/documentation/v3/business_search
 app.post('/api/search', function(req, res) {
+	// let api_key = process.env.API_KEY
 	let request = axios.create({
 		headers: {
 			Authorization: `Bearer HBLkugs6PvIPyz5hNupxRUtXC5_dxH3a_lscCNOSr2lTOoHuH-R1S67Wl5cnCCUg6xnJuWN6UnUHCbPZeAILWzsAsO60K8w1mSDYE6-r40SAPnhn7EQA3aVSbhFVWnYx`
