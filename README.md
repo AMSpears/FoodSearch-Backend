@@ -1,6 +1,6 @@
 # Food Search
 
-![picture](./Img/FS-logo.png)
+![picture](Img/FS-logo.png)
 
 ## Description
 
