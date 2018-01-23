@@ -57,10 +57,8 @@ Dependencies Back-end:
 
 * Fork or Clone front-end and back-end repositories
 * Run npm install
-* Ensure BackendVariable.js file exports the right location depending on where you would like to run the back-end
-* Start mongo
-* Remember to whitelist desired front-end in the index.js back-end file
-* Run npm start
+* Start mongo (Backend)
+* Run npm start (Frontend)
 
 ## Future Features
 
