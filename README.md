@@ -17,13 +17,15 @@ The purpose of this application is to allow the user to browse for restaurants w
 
 ## Technologies Uses
 
-MERN stack (MongoDB, Express, React, Node.js)
+Express.js
+
+React.js
+
+Node.js
 
 CSS
 
 HTML
-
-JavaScript
 
 Dependencies Front-end:
 
